@@ -1,16 +1,40 @@
 import socket
 import threading
 
+#variabila pentru a retine culoarea semaforului
+semafor_state = ""
+
 # Funcția pentru gestionarea conexiunii cu un client
 def handle_client(client_socket):
+    global semafor_state
+    global nr_pieton
     while True:
         try:
             # Primește date de la client
             data = client_socket.recv(1024)
             if not data:
                 break
-            print(f"Stare primită: {data.decode()}")
-        except:
+            message = data.decode()
+            #Cerere Masina---------------------------------
+            if message.startswith("prezenta masina"):
+                # Trimite starea semaforului către client
+                client_socket.sendall(semafor_state.encode())
+                print(f"Prezenta Masina")
+
+            #Cerere Pieton------------------------------
+            if message.startswith("prezenta pieton"):
+                # Trimite starea semaforului către client
+                client_socket.sendall(semafor_state.encode())
+                print(f"Prezenta Pieton")
+
+            #Actualizare semafor-------------------------------
+            elif message.startswith("Semafor:"):
+                # Actualizează starea semaforului
+                semafor_state = message.split(":")[1]
+                print(f"Stare semafor actualizată: {semafor_state}")
+
+        except Exception as e:
+            print(f"Eroare la gestionarea clientului: {e}")
             break
     client_socket.close()
 
