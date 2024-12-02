@@ -1,44 +1,61 @@
-import threading
 import socket
-import time
+import threading
 
-# Funcția pentru simularea semaforului
-def semafor_logic(client_socket):
+#variabila pentru a retine culoarea semaforului
+semafor_state = ""
+
+# Funcția pentru gestionarea conexiunii cu un client
+def handle_client(client_socket):
+    global semafor_state
+    global nr_pieton
     while True:
-        # Trimite starea VERDE
-        state = "verde"
-        client_socket.sendall(state.encode())
-        print(f"Semafor: {state}")
-        time.sleep(30)
+        try:
+            # Primește date de la client
+            data = client_socket.recv(1024)
+            if not data:
+                break
+            message = data.decode()
+            #Cerere Masina---------------------------------
+            if message.startswith("prezenta masina"):
+                # Trimite starea semaforului către client
+                client_socket.sendall(semafor_state.encode())
+                print(f"Prezenta Masina")
 
-        # Trimite starea ROȘU
-        state = "rosu"
-        client_socket.sendall(state.encode())
-        print(f"Semafor: {state}")
-        time.sleep(10)
+            #Cerere Pieton------------------------------
+            if message.startswith("prezenta pieton"):
+                # Trimite starea semaforului către client
+                client_socket.sendall(semafor_state.encode())
+                print(f"Prezenta Pieton")
+
+            #Actualizare semafor-------------------------------
+            elif message.startswith("Semafor:"):
+                # Actualizează starea semaforului
+                semafor_state = message.split(":")[1]
+                print(f"Stare semafor actualizată: {semafor_state}")
+
+        except Exception as e:
+            print(f"Eroare la gestionarea clientului: {e}")
+            break
+    client_socket.close()
 
 # Funcția principală
 def main():
-    # Configurare conexiune către server
-    server_host = '127.0.0.1'  # Adresa serverului
-    server_port = 12345        # Portul serverului
+    server_host = '127.0.0.1'  # Adresa locală
+    server_port = 12345        # Portul pentru conexiune
 
-    client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    client_socket.connect((server_host, server_port))
-    print("Conectat la server.")
+    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server_socket.bind((server_host, server_port))
+    server_socket.listen(5)  # Permite până la 5 conexiuni simultane
+    print("Server pornit și așteaptă conexiuni...")
 
-    # Pornire fir de execuție pentru logica semaforului
-    semafor_thread = threading.Thread(target=semafor_logic, args=(client_socket,))
-    semafor_thread.daemon = True
-    semafor_thread.start()
+    while True:
+        client_socket, addr = server_socket.accept()
+        print(f"Conexiune acceptată de la {addr}")
 
-    # Menține conexiunea deschisă
-    try:
-        while True:
-            time.sleep(1)
-    except KeyboardInterrupt:
-        print("Deconectare...")
-        client_socket.close()
+        # Pornire fir de execuție pentru clientul conectat
+        client_thread = threading.Thread(target=handle_client, args=(client_socket,))
+        client_thread.daemon = True
+        client_thread.start()
 
 if __name__ == "__main__":
     main()
