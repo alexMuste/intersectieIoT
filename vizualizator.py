@@ -14,12 +14,12 @@ screen = pygame.display.set_mode((screen_width, screen_height))
 pygame.display.set_caption("Simulare Intersecție")
 
 # Culori
-background_color = (50, 50, 50)
+background_color = (216, 216, 216)
 road_color = (100, 100, 100)
 red_light = (255, 0, 0)
 green_light = (0, 255, 0)
 car_color = (0, 0, 255)
-pedestrian_color = (0, 255, 0)
+pedestrian_color = (64, 128, 128)
 
 # Conectare la server
 server_host = '127.0.0.1'
@@ -59,8 +59,8 @@ threading.Thread(target=fetch_server_data, daemon=True).start()
 # Funcția pentru afișarea semaforului
 def draw_semaphore(x, y, state):
     color = green_light if state == "verde" else red_light
-    pygame.draw.rect(screen, (50, 50, 50), (x, y, 50, 150))  # Fundal semafor
-    pygame.draw.circle(screen, color, (x + 25, y + 50), 20)
+    pygame.draw.rect(screen, (20, 20, 20), (x, y, 40, 100))  # Fundal semafor
+    pygame.draw.circle(screen, color, (x + 20, y + 23), 15)
 
 # Funcția principală de afișare
 clock = pygame.time.Clock()
@@ -74,10 +74,10 @@ while True:
     screen.fill(background_color)
 
     # Desenează drumul (zona intersecției)
-    pygame.draw.rect(screen, road_color, (300, 200, 200, 200))
+    pygame.draw.rect(screen, road_color, (0, 200, 1000, 150))
 
     # Desenează semaforul
-    draw_semaphore(370, 180, semafor_state)
+    draw_semaphore(300, 260, semafor_state)
 
     # Actualizare mișcare vehicule/pietoni pe baza semaforului
     if semafor_state == "verde":
@@ -96,7 +96,7 @@ while True:
 
     # Desenează vehiculele
     for vehicle in vehicles:
-        pygame.draw.rect(screen, car_color, (vehicle["x"], vehicle["y"], 40, 20))
+        pygame.draw.rect(screen, car_color, (vehicle["x"], vehicle["y"], 150, 70))
 
     # Desenează pietonii
     for pedestrian in pedestrians:
