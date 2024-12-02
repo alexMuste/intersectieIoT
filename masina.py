@@ -3,34 +3,19 @@ import socket
 import time
 
 # Funcția pentru simularea semaforului
-def masina(client_socket):
+def semafor_logic(client_socket):
     while True:
-        # Trimite mesajul despre prezența mașinii
-        state = "prezenta masina"
+        # Trimite starea VERDE
+        state = "Semafor: verde"
         client_socket.sendall(state.encode())
         print(f"{state}")
-        time.sleep(10)  # Trimite mesaj la fiecare 5 secunde (poate fi ajustat)
+        time.sleep(30)
 
-# Funcția pentru a primi culoarea semaforului de la server
-def primire_semafor(client_socket):
-    while True:
-        try:
-            # Așteaptă un mesaj de la server
-            data = client_socket.recv(1024)
-            if not data:
-                print("Conexiunea cu serverul a fost întreruptă.")
-                break
-            semafor_culoare = data.decode()
-            print(f"Culoare semafor: {semafor_culoare}")
-
-            if semafor_culoare.lower() == " verde":
-                print("Semaforul este verde! Mașinele pot trece.")
-            elif semafor_culoare.lower() == " rosu":
-                print("Semaforul este roșu! Mașina se oprește.")
-
-        except Exception as e:
-            print(f"Eroare la recepția datelor: {e}")
-            break
+        # Trimite starea ROȘU
+        state = "Semafor: rosu"
+        client_socket.sendall(state.encode())
+        print(f"{state}")
+        time.sleep(10)
 
 # Funcția principală
 def main():
@@ -42,15 +27,10 @@ def main():
     client_socket.connect((server_host, server_port))
     print("Conectat la server.")
 
-    # Pornire fir de execuție pentru simularea trimiterii mesajelor de la "mașină"
-    masina_thread = threading.Thread(target=masina, args=(client_socket,))
-    masina_thread.daemon = True
-    masina_thread.start()
-
-    # Pornire fir de execuție pentru recepția culorii semaforului
-    primire_thread = threading.Thread(target=primire_semafor, args=(client_socket,))
-    primire_thread.daemon = True
-    primire_thread.start()
+    # Pornire fir de execuție pentru logica semaforului
+    semafor_thread = threading.Thread(target=semafor_logic, args=(client_socket,))
+    semafor_thread.daemon = True
+    semafor_thread.start()
 
     # Menține conexiunea deschisă
     try:
