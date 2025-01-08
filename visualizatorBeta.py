@@ -156,9 +156,9 @@ while running:
         directions = random.choices(["right", "left"], k=random.randint(1, 2))
         for direction in directions:
             if direction == "right":
-                masini.append({"x": 100, "y": 290, "direction": "right", "stare_oprit": False})
+                masini.append({"x": 0, "y": 290, "direction": "right", "stare_oprit": False})
             elif direction == "left":
-                masini.append({"x": 700, "y": 210, "direction": "left", "stare_oprit": False})
+                masini.append({"x": 750, "y": 210, "direction": "left", "stare_oprit": False})
         prezenta_masina = False  # Resetăm semnalul după adăugare
 
     if prezenta_pieton:
