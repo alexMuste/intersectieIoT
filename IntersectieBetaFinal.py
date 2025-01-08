@@ -4,8 +4,6 @@ import time
 
 # Variabile globale pentru starea semaforului și numărul de pietoni
 stare_semafor = "roșu"
-pozitie_masina = ""
-prezenta_pieton = ""
 clients = []  # Lista de clienți conectați
 
 
