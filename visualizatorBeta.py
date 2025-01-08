@@ -210,8 +210,8 @@ while running:
                     pietoni.remove(pedestrian)
 
     # Desenează semafoarele
-    draw_semafor1(30, 50, stare_semafor)
-    draw_semafor2(200, 50, semafor_pietoni)
+    draw_semafor1(300, 355, stare_semafor)
+    draw_semafor2(460, 140, semafor_pietoni)
 
     # Desenează vehiculele
     for vehicle in masini:
